@@ -8,9 +8,10 @@ jobs:
   check-access:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
+     steps:
+    - name: Checkout code          # ← Step name shown in logs
       uses: actions/checkout@v4
+      
     - name: Configure AWS Credentials
       uses: aws-action/configure-aws-credentials@v4
       with:
