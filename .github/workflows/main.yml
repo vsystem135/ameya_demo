@@ -7,7 +7,6 @@ on:
 
 permissions:
       id-token: write    # ✅ required for OIDC
-      contents: read
 jobs:
   check-access:
     runs-on: ubuntu-latest
