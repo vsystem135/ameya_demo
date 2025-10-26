@@ -31,31 +31,31 @@ jobs:
           aws-region: ap-south-1
 
       - name: Terraform Init
-        working-directory: ./ameya_demo/terraform
+        working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform init -input=false
 
       - name: Terraform Validate
-        working-directory: ./ameya_demo/terraform
+        working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: ./ameya_demo/terraform
+        working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform plan -input=false -out=tfplan
 
       - name: Terraform Apply
-        working-directory: ./ameya_demo/terraform
+        working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform apply -input=false -auto-approve tfplan
 
       - name: Show outputs
-        working-directory: ./ameya_demo/terraform
+        working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform output
