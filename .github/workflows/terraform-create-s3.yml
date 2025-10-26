@@ -1,4 +1,4 @@
-name: Terraform Create EC2
+name: Terraform Create Secure S3
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  id-token: write   # Required for OIDC
+  id-token: write
   contents: read
 
 jobs:
@@ -15,47 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.7
-
-      - name: Configure AWS Credentials
+    
+      - name: Configure AWS credentials (assume role)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole  # Replace with your role ARN
+          role-to-assume: arn:aws:iam::975050234474:role/github-openid-demo1   # ← REPLACE with your role ARN
+          role-session-name: github-actions-terraform-${{ github.run_id }}
           aws-region: ap-south-1
-          role-session-name: github-actions-terraform-ec2-${{ github.run_id }}
 
-      - name: Terraform Init
-        working-directory: ./terraform
-        env:
-          TF_IN_AUTOMATION: "true"
-        run: terraform init -input=false
-
-      - name: Terraform Validate
-        working-directory: ./terraform
-        env:
-          TF_IN_AUTOMATION: "true"
-        run: terraform validate
-
-      - name: Terraform Plan
-        working-directory: ./terraform
-        env:
-          TF_IN_AUTOMATION: "true"
-        run: terraform plan -input=false -out=tfplan
-
-      - name: Terraform Apply
-        working-directory: ./terraform
-        env:
-          TF_IN_AUTOMATION: "true"
-        run: terraform apply -input=false -auto-approve tfplan
-
-      - name: Show Terraform Outputs
-        working-directory: ./terraform
-        env:
-          TF_IN_AUTOMATION: "true"
-        run: terraform output
