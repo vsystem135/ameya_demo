@@ -8,7 +8,7 @@ jobs:
   check-access:
     runs-on: ubuntu-latest
 
-     steps:
+     steps: 
     - name: Checkout code          # ← Step name shown in logs
       uses: actions/checkout@v4
       
