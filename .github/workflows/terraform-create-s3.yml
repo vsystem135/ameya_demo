@@ -54,8 +54,9 @@ jobs:
           TF_IN_AUTOMATION: "true"
         run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Show outputs
+      - name: Show Terraform Outputs
         working-directory: ./terraform
         env:
           TF_IN_AUTOMATION: "true"
         run: terraform output
+
