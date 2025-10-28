@@ -15,7 +15,7 @@ terraform {
 provider "aws" {
   region = "ap-south-1"
 }
-
+/*
 resource "aws_s3_bucket" "secure_bucket" {
   bucket = "v3system-secure-bucket-${random_id.suffix.hex}"
 
@@ -36,3 +36,4 @@ resource "aws_s3_bucket_public_access_block" "secure_bucket_block" {
 resource "random_id" "suffix" {
   byte_length = 4
 }
+*/
