@@ -57,8 +57,7 @@ jobs:
 
       - name: Run lint check
         working-directory: ./terraform
-        run: tflint --init && tflint 
-
+        run: tflint
 
       - name: Terraform Init
         working-directory: ./terraform
