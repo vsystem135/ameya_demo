@@ -45,10 +45,11 @@ jobs:
           curl -L "https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-linux-amd64" -o /usr/local/bin/tfsec
           chmod +x /usr/local/bin/tfsec
 
-      - name: Run tfsec (Terraform Security Scanner)
-        working-directory: ./terraform
-        run: |
-          tfsec --format standard .
+      - name: Run Trivy Terraform Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: ./terraform
         
       - name: Run TFLint (Terraform Linter)
         uses: terraform-linters/setup-tflint@v4
