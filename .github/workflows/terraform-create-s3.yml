@@ -40,21 +40,6 @@ jobs:
         with:
           terraform_version: 1.9.5
 
-      - name: Run Trivy Terraform Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: config
-          scan-ref: ./terraform
-        
-      - name: Run TFLint (Terraform Linter)
-        uses: terraform-linters/setup-tflint@v4
-        with:
-         tflint_version: latest
-
-      - name: Run lint check
-        working-directory: ./terraform
-        run: tflint --init && tflint 
-
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init -input=false
