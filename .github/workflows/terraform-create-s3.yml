@@ -15,14 +15,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repo
         uses: actions/checkout@v4
 
-    
+      # Step 2: Configure AWS credentials using OIDC
       - name: Configure AWS credentials (assume role)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::975050234474:role/github-openid-demo1   # ← REPLACE with your role ARN
+          role-to-assume: arn:aws:iam::975050234474:role/github-openid-demo1  # Replace with your role ARN
           role-session-name: github-actions-terraform-${{ github.run_id }}
           aws-region: ap-south-1
 
+      # Step 3: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      # Step 4: Terraform Init
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init -input=false
+
+      # Step 5: Terraform Validate
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+
+      # Step 6: Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -input=false
+
+      # Step 7: Terraform Apply
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./terraform
+        run: terraform apply -auto-approve -input=false
