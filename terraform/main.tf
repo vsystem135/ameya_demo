@@ -5,10 +5,11 @@ terraform {
       version = "~> 5.0"
     }
   }
-
+/*
   backend "s3" {
     # Optional if you store Terraform state remotely
   }
+*/
 }
 
 provider "aws" {
