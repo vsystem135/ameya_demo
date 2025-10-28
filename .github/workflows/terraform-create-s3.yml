@@ -11,6 +11,10 @@ on:
         options:
           - apply
           - destroy
+      target:
+        description: "Optional: Terraform target resource (e.g. aws_s3_bucket.secure_bucket)"
+        required: false
+        default: ""
 
 permissions:
   id-token: write
@@ -21,11 +25,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Step 2: Configure AWS credentials via OIDC
       - name: Configure AWS credentials (assume role)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -33,35 +35,38 @@ jobs:
           role-session-name: github-actions-terraform-${{ github.run_id }}
           aws-region: ap-south-1
 
-      # Step 3: Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
 
-      # Step 4: Terraform Init
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init -input=false
 
-      # Step 5: Terraform Validate
       - name: Terraform Validate
         working-directory: ./terraform
         run: terraform validate
 
-      # Step 6: Terraform Plan
       - name: Terraform Plan
         working-directory: ./terraform
         run: terraform plan -input=false
 
-      # Step 7: Terraform Apply or Destroy (based on input)
       - name: Terraform Apply or Destroy
         working-directory: ./terraform
         run: |
           if [ "${{ github.event.inputs.action }}" == "apply" ]; then
             echo "🟢 Running Terraform Apply..."
-            terraform apply -auto-approve -input=false
+            if [ -n "${{ github.event.inputs.target }}" ]; then
+              terraform apply -target=${{ github.event.inputs.target }} -auto-approve -input=false
+            else
+              terraform apply -auto-approve -input=false
+            fi
           else
             echo "🔴 Running Terraform Destroy..."
-            terraform destroy -auto-approve -input=false
+            if [ -n "${{ github.event.inputs.target }}" ]; then
+              terraform destroy -target=${{ github.event.inputs.target }} -auto-approve -input=false
+            else
+              terraform destroy -auto-approve -input=false
+            fi
           fi
