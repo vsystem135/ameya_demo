@@ -1,10 +1,16 @@
-name: Terraform Create Secure S3
+name: Terraform Apply or Destroy Secure S3
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      action:
+        description: "Choose action to perform: apply or destroy"
+        required: true
+        default: "apply"
+        type: choice
+        options:
+          - apply
+          - destroy
 
 permissions:
   id-token: write
@@ -15,15 +21,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Step 2: Configure AWS credentials using OIDC
+      # Step 2: Configure AWS credentials via OIDC
       - name: Configure AWS credentials (assume role)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::975050234474:role/github-openid-demo1  # Replace with your role ARN
+          role-to-assume: arn:aws:iam::975050234474:role/github-openid-demo1
           role-session-name: github-actions-terraform-${{ github.run_id }}
           aws-region: ap-south-1
 
@@ -48,13 +54,14 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -input=false
 
-      # Step 7: Terraform Apply
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+      # Step 7: Terraform Apply or Destroy (based on input)
+      - name: Terraform Apply or Destroy
         working-directory: ./terraform
-        run: terraform apply -auto-approve -input=false
-
-       # Step 5: Terraform Destroy
-      - name: Terraform Destroy
-        working-directory: ./terraform
-        run: terraform destroy -auto-approve -input=false
+        run: |
+          if [ "${{ github.event.inputs.action }}" == "apply" ]; then
+            echo "🟢 Running Terraform Apply..."
+            terraform apply -auto-approve -input=false
+          else
+            echo "🔴 Running Terraform Destroy..."
+            terraform destroy -auto-approve -input=false
+          fi
