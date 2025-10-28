@@ -53,3 +53,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         working-directory: ./terraform
         run: terraform apply -auto-approve -input=false
+
+       # Step 5: Terraform Destroy
+      - name: Terraform Destroy
+        working-directory: ./terraform
+        run: terraform destroy -auto-approve -input=false
